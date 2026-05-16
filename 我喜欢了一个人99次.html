@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>我喜欢了一个人99次</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #e8f4fc 0%, #f0f7ff 30%, #f5faff 60%, #eef6ff 100%);
+            color: #3a4a5a;
+            line-height: 1.8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 柔和光晕背景 */
+        .glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(135, 206, 250, 0.25) 0%, transparent 70%);
+            top: -5%;
+            left: -10%;
+            animation: drift 25s ease-in-out infinite;
+        }
+
+        .glow-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(176, 224, 230, 0.2) 0%, transparent 70%);
+            top: 35%;
+            right: -8%;
+            animation: drift 30s ease-in-out infinite reverse;
+        }
+
+        .glow-3 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(173, 216, 230, 0.18) 0%, transparent 70%);
+            bottom: 15%;
+            left: 15%;
+            animation: drift 35s ease-in-out infinite;
+        }
+
+        .glow-4 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(135, 206, 235, 0.15) 0%, transparent 70%);
+            top: 60%;
+            left: 50%;
+            animation: drift 28s ease-in-out infinite reverse;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(40px, -30px); }
+            66% { transform: translate(-25px, 25px); }
+        }
+
+        /* 漂浮光点 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(135, 206, 250, 0.4) 0%, transparent 70%);
+            animation: float var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: var(--opacity); }
+            90% { opacity: var(--opacity); }
+            50% { transform: translateY(var(--moveY)) translateX(var(--moveX)); }
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 80px 24px 120px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .top-signature {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(100, 149, 237, 0.3);
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 300;
+            color: #4a6fa5;
+            margin-bottom: 60px;
+            letter-spacing: 6px;
+            opacity: 0;
+            animation: fadeInDown 1.5s ease forwards;
+        }
+
+        .music-hint {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(100, 149, 237, 0.5);
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 0.5s forwards;
+        }
+
+        .music-hint span {
+            display: inline-block;
+            animation: pulse 2s ease infinite;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100, 149, 237, 0.3), transparent);
+            margin: 0 auto 50px;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 0.3s forwards;
+        }
+
+        .item {
+            margin-bottom: 32px;
+            padding: 16px 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-left: 2px solid transparent;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+        }
+
+        .item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            border-left: 2px solid rgba(100, 149, 237, 0.25);
+            background: linear-gradient(90deg, rgba(135, 206, 250, 0.06) 0%, transparent 100%);
+        }
+
+        .item-number {
+            display: inline-block;
+            font-size: 13px;
+            color: rgba(100, 149, 237, 0.55);
+            margin-right: 12px;
+            font-weight: 300;
+            min-width: 70px;
+            font-family: "Georgia", serif;
+        }
+
+        .item-text {
+            font-size: 15px;
+            color: #4a5568;
+            font-weight: 400;
+            line-height: 1.9;
+        }
+
+        .item-final {
+            margin-top: 80px;
+            margin-bottom: 40px;
+            text-align: center;
+            padding: 50px 30px 40px;
+            background: linear-gradient(135deg, rgba(230, 242, 255, 0.8) 0%, rgba(240, 247, 255, 0.6) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(135, 206, 250, 0.2);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(135, 206, 250, 0.1);
+        }
+
+        .item-final::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(135, 206, 250, 0.08) 0%, transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        .item-final.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .item-final .item-number {
+            display: block;
+            font-size: 16px;
+            color: rgba(100, 149, 237, 0.7);
+            margin-bottom: 16px;
+            margin-right: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-final .item-text {
+            font-size: 18px;
+            color: #3a4a5a;
+            font-weight: 400;
+            line-height: 2.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .heart {
+            display: inline-block;
+            color: #6495ed;
+            animation: heartbeat 1.8s ease infinite;
+            font-size: 24px;
+        }
+
+        .signature-final {
+            margin-top: 30px;
+            text-align: center;
+            opacity: 0;
+            transition: all 1s ease 0.8s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .signature-final.visible {
+            opacity: 1;
+        }
+
+        .signature-text {
+            font-size: 16px;
+            color: rgba(100, 149, 237, 0.6);
+            font-weight: 400;
+            letter-spacing: 3px;
+            font-style: italic;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            font-size: 12px;
+            color: rgba(100, 149, 237, 0.35);
+            opacity: 0;
+            animation: fadeIn 2s ease 1s forwards;
+            letter-spacing: 2px;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(135, 206, 250, 0.3);
+            border-radius: 2px;
+        }
+
+        .music-player {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(135, 206, 250, 0.3);
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(135, 206, 250, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            border-color: rgba(135, 206, 250, 0.5);
+            box-shadow: 0 4px 25px rgba(135, 206, 250, 0.25);
+            transform: scale(1.05);
+        }
+
+        .music-player:active {
+            transform: scale(0.95);
+        }
+
+        .music-player.playing {
+            animation: rotate 10s linear infinite;
+        }
+
+        .music-player svg {
+            width: 20px;
+            height: 20px;
+            fill: #6495ed;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tap-hint {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(135, 206, 250, 0.3);
+            padding: 24px 40px;
+            border-radius: 40px;
+            box-shadow: 0 8px 40px rgba(135, 206, 250, 0.15);
+            font-size: 14px;
+            color: #6495ed;
+            z-index: 200;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            letter-spacing: 2px;
+        }
+
+        .tap-hint.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 底部渐变遮罩 */
+        .bottom-fade {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(to top, rgba(232, 244, 252, 0.9) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+    <div class="glow glow-4"></div>
+    <div class="bottom-fade"></div>
+
+    <div class="tap-hint" id="tapHint" onclick="startExperience()">
+        <span>✨ 点击开启梦幻与故事</span>
+    </div>
+
+    <div class="container">
+        <div class="top-signature">R汐.</div>
+        <div class="title">我喜欢了一个人99次</div>
+        <div class="divider"></div>
+        <div class="music-hint"><span>♪ 3 Strikes - Terror Jr</span></div>
+
+        <div class="item"><span class="item-number">第一次</span><span class="item-text">喜欢自己，是早上醒来照镜子，被自己睡醒的样子美到了。</span></div>
+        <div class="item"><span class="item-number">第二次</span><span class="item-text">刷牙时看着镜子里的自己，觉得这牙齿白得能去拍牙膏广告。</span></div>
+        <div class="item"><span class="item-number">第三次</span><span class="item-text">洗脸时摸着自己的皮肤，感叹怎么可以这么光滑。</span></div>
+        <div class="item"><span class="item-number">第四次</span><span class="item-text">梳头发时随手一抓，发型就完美得像刚做过造型。</span></div>
+        <div class="item"><span class="item-number">第五次</span><span class="item-text">穿上校服，觉得自己简直是全校最靓的风景线。</span></div>
+        <div class="item"><span class="item-number">第六次</span><span class="item-text">系鞋带时低头看到自己的侧脸，忍不住多欣赏了两秒。</span></div>
+        <div class="item"><span class="item-number">第七次</span><span class="item-text">出门前最后一次照镜子，对自己比了个完美的"耶"。</span></div>
+        <div class="item"><span class="item-number">第八次</span><span class="item-text">走在路上，感觉今天的阳光都是专门为我打的追光。</span></div>
+        <div class="item"><span class="item-number">第九次</span><span class="item-text">风吹乱了我的刘海，我觉得自己像洗发水广告主角。</span></div>
+        <div class="item"><span class="item-number">第十次</span><span class="item-text">路人多看了我一眼，我心想：没办法，魅力太大。</span></div>
+
+        <div class="item"><span class="item-number">第十一次</span><span class="item-text">走进教室，感觉自己一出场，整个房间都亮了。</span></div>
+        <div class="item"><span class="item-number">第十二次</span><span class="item-text">老师盯着我看，我问他是不是被我的美貌震慑了。</span></div>
+        <div class="item"><span class="item-number">第十三次</span><span class="item-text">早读时大声朗读，觉得自己认真的声音特别有磁性。</span></div>
+        <div class="item"><span class="item-number">第十四次</span><span class="item-text">举手回答问题，老师看我的眼神里充满了欣赏。</span></div>
+        <div class="item"><span class="item-number">第十五次</span><span class="item-text">答对了一道难题，觉得自己智商简直爆表。</span></div>
+        <div class="item"><span class="item-number">第十六次</span><span class="item-text">写字时看着自己的字迹，这字写得也太潇洒了吧。</span></div>
+        <div class="item"><span class="item-number">第十七次</span><span class="item-text">被老师表扬了，我淡定地点头，心想这是理所当然。</span></div>
+        <div class="item"><span class="item-number">第十八次</span><span class="item-text">课间休息时我坐在窗边，觉得自己忧郁的样子很有气质。</span></div>
+        <div class="item"><span class="item-number">第十九次</span><span class="item-text">有同学来借笔，我觉得自己乐于助人的样子真美。</span></div>
+        <div class="item"><span class="item-number">第二十次</span><span class="item-text">喝水时仰头的动作，被前桌夸像拍电影。</span></div>
+
+        <div class="item"><span class="item-number">第二十一次</span><span class="item-text">体育课集合，我站得笔直，觉得自己身姿挺拔如松。</span></div>
+        <div class="item"><span class="item-number">第二十二次</span><span class="item-text">跑步时超过别人，觉得风都在为我欢呼。</span></div>
+        <div class="item"><span class="item-number">第二十三次</span><span class="item-text">射箭时一箭正中靶心，那个抛物线完美得像经过精密计算。</span></div>
+        <div class="item"><span class="item-number">第二十四次</span><span class="item-text">擦汗的动作，觉得自己充满了青春的气息。</span></div>
+        <div class="item"><span class="item-number">第二十五次</span><span class="item-text">朋友夸我体力好，我心想：毕竟是全能型选手。</span></div>
+        <div class="item"><span class="item-number">第二十六次</span><span class="item-text">午饭时胃口很好，觉得自己吃饭的样子都很可爱。</span></div>
+        <div class="item"><span class="item-number">第二十七次</span><span class="item-text">把不爱吃的苦瓜挑出来，觉得自己挑食也很有原则。</span></div>
+        <div class="item"><span class="item-number">第二十八次</span><span class="item-text">食堂阿姨多给我打了一勺肉，肯定是因为我长得讨喜。</span></div>
+        <div class="item"><span class="item-number">第二十九次</span><span class="item-text">午睡醒来，虽然脸上有印子，但依然掩不住好看。</span></div>
+        <div class="item"><span class="item-number">第三十次</span><span class="item-text">下午上课没犯困，觉得自己专注力简直无敌。</span></div>
+
+        <div class="item"><span class="item-number">第三十一次</span><span class="item-text">帮同桌捡起掉落的笔，觉得自己优雅风度满分。</span></div>
+        <div class="item"><span class="item-number">第三十二次</span><span class="item-text">听到有人窃窃私语讨论我，我知道那是对我魅力的认可。</span></div>
+        <div class="item"><span class="item-number">第三十三次</span><span class="item-text">被叫起来背诵课文，流利得让自己都佩服。</span></div>
+        <div class="item"><span class="item-number">第三十四次</span><span class="item-text">看到黑板上自己的名字，觉得这名字写在这里好有感觉。</span></div>
+        <div class="item"><span class="item-number">第三十五次</span><span class="item-text">值日时擦黑板，觉得自己劳动的样子怎么那么棒！</span></div>
+        <div class="item"><span class="item-number">第三十六次</span><span class="item-text">把垃圾准确投进垃圾桶，这精准度没谁了。</span></div>
+        <div class="item"><span class="item-number">第三十七次</span><span class="item-text">放学排队，我站在队伍里像鹤立鸡群。</span></div>
+        <div class="item"><span class="item-number">第三十八次</span><span class="item-text">走出校门，觉得夕阳的余晖都在衬托我的轮廓。</span></div>
+        <div class="item"><span class="item-number">第三十九次</span><span class="item-text">回家路上买了瓶水，觉得自己拿水瓶的姿势都很酷。</span></div>
+        <div class="item"><span class="item-number">第四十次</span><span class="item-text">看到路边橱窗里的倒影，忍不住停下来整理一下衣领。</span></div>
+
+        <div class="item"><span class="item-number">第四十一次</span><span class="item-text">回到家，觉得自己带着一身光芒推开了家门。</span></div>
+        <div class="item"><span class="item-number">第四十二次</span><span class="item-text">妈妈问我今天开心吗，我说："这么好看当然开心。"</span></div>
+        <div class="item"><span class="item-number">第四十三次</span><span class="item-text">写作业时觉得自己思考时皱眉的样子很有深度。</span></div>
+        <div class="item"><span class="item-number">第四十四次</span><span class="item-text">解出一道数学题，觉得自己简直是未来的数学家。</span></div>
+        <div class="item"><span class="item-number">第四十五次</span><span class="item-text">听英语听力，觉得自己语感好得可以去当翻译。</span></div>
+        <div class="item"><span class="item-number">第四十六次</span><span class="item-text">语文作文被当范文读，觉得自己文采斐然。</span></div>
+        <div class="item"><span class="item-number">第四十七次</span><span class="item-text">画画时随手涂鸦，觉得自己有艺术家的天赋。</span></div>
+        <div class="item"><span class="item-number">第四十八次</span><span class="item-text">哼着歌，觉得自己嗓音条件不去当歌手真是浪费。</span></div>
+        <div class="item"><span class="item-number">第四十九次</span><span class="item-text">照镜子看到自己脸上的小痘痘，觉得那是青春的勋章。</span></div>
+        <div class="item"><span class="item-number">第五十次</span><span class="item-text">洗完澡出来，觉得自己清爽得像刚摘下的薄荷叶。</span></div>
+
+        <div class="item"><span class="item-number">第五十一次</span><span class="item-text">护肤时涂面霜，觉得自己精致得无可挑剔。</span></div>
+        <div class="item"><span class="item-number">第五十二次</span><span class="item-text">躺在床上，觉得自己连睡觉的姿势都这么优雅。</span></div>
+        <div class="item"><span class="item-number">第五十三次</span><span class="item-text">做梦梦到自己拯救了世界，醒来觉得这很符合人设。</span></div>
+        <div class="item"><span class="item-number">第五十四次</span><span class="item-text">第二天醒来，觉得自己又是元气满满的一天。</span></div>
+        <div class="item"><span class="item-number">第五十五次</span><span class="item-text">选衣服时纠结了一下，觉得每一件衣服穿我身上都好看。</span></div>
+        <div class="item"><span class="item-number">第五十六次</span><span class="item-text">戴上手表，觉得自己时间观念强得让人敬佩。</span></div>
+        <div class="item"><span class="item-number">第五十七次</span><span class="item-text">背上书包，觉得自己负重的样子都这么轻盈。</span></div>
+        <div class="item"><span class="item-number">第五十八次</span><span class="item-text">看到镜子里的自己，忍不住对自己说："早安。"</span></div>
+        <div class="item"><span class="item-number">第五十九次</span><span class="item-text">坐公交车，有人给我让座，肯定是因为我看起来需要关爱。</span></div>
+        <div class="item"><span class="item-number">第六十次</span><span class="item-text">给老人让座，觉得自己品德高尚得闪闪发光。</span></div>
+
+        <div class="item"><span class="item-number">第六十一次</span><span class="item-text">看到窗外的云，觉得它们形状像我一样好看。</span></div>
+        <div class="item"><span class="item-number">第六十二次</span><span class="item-text">听到一首歌，觉得只有我的品味才能欣赏这种音乐。</span></div>
+        <div class="item"><span class="item-number">第六十三次</span><span class="item-text">看到一只可爱的狗，觉得它看我的眼神都充满了崇拜。</span></div>
+        <div class="item"><span class="item-number">第六十四次</span><span class="item-text">被老师批评了，觉得老师是因为对我期望太高。</span></div>
+        <div class="item"><span class="item-number">第六十五次</span><span class="item-text">改正了错误，觉得自己知错就改的样子特别迷人。</span></div>
+        <div class="item"><span class="item-number">第六十六次</span><span class="item-text">帮同学讲题，觉得自己耐心的样子简直闪闪发光。</span></div>
+        <div class="item"><span class="item-number">第六十七次</span><span class="item-text">，看到同学们各有各的闪光点，觉得大家都好厉害，我也要更努力才行。</span></div>
+        <div class="item"><span class="item-number">第六十八次</span><span class="item-text">，发现每个人都有值得我学习的地方，原来优秀可以有很多种模样。</span></div>
+        <div class="item"><span class="item-number">第六十九次</span><span class="item-text">下雨天没带伞，觉得自己淋雨的样子很有电影感。</span></div>
+        <div class="item"><span class="item-number">第七十次</span><span class="item-text">有人挤到我伞下，觉得自己人缘好得没话说。</span></div>
+
+        <div class="item"><span class="item-number">第七十一次</span><span class="item-text">开口说话，觉得自己连说话的语气都这么温柔。</span></div>
+        <div class="item"><span class="item-number">第七十二次</span><span class="item-text">打喷嚏，觉得自己打喷嚏的样子都这么可爱。</span></div>
+        <div class="item"><span class="item-number">第七十三次</span><span class="item-text">打哈欠，觉得自己打哈欠的样子都这么慵懒迷人。</span></div>
+        <div class="item"><span class="item-number">第七十四次</span><span class="item-text">伸懒腰，觉得自己的柔韧性简直无敌。</span></div>
+        <div class="item"><span class="item-number">第七十五次</span><span class="item-text">看到镜子里的自己，觉得自己的五官比例简直是老天爷赏饭吃。</span></div>
+        <div class="item"><span class="item-number">第七十六次</span><span class="item-text">拍照，觉得自己的每一个动作都做得这么优雅。</span></div>
+        <div class="item"><span class="item-number">第七十七次</span><span class="item-text">注意到别人的目光，觉得自己的回头率简直爆表。</span></div>
+        <div class="item"><span class="item-number">第七十八次</span><span class="item-text">看到周围的人，觉得自己的影子都比别人的好看。</span></div>
+        <div class="item"><span class="item-number">第七十九次</span><span class="item-text">看到别人的发色，觉得还是自己的发色最耐看。</span></div>
+        <div class="item"><span class="item-number">第八十次</span><span class="item-text">认识新朋友，觉得自己的笑容可以治愈一切。</span></div>
+
+        <div class="item"><span class="item-number">第八十一次</span><span class="item-text">穿新鞋子，觉得新鞋子都因为我而变得更酷了。</span></div>
+        <div class="item"><span class="item-number">第八十二次</span><span class="item-text">走路的姿势，觉得自己走路的样子都这么自信。</span></div>
+        <div class="item"><span class="item-number">第八十三次</span><span class="item-text">闻到食物的香味，觉得自己连吃饭的样子都这么有食欲。</span></div>
+        <div class="item"><span class="item-number">第八十四次</span><span class="item-text">喝到好喝的饮料，觉得自己连喝水的动作都这么有格调。</span></div>
+        <div class="item"><span class="item-number">第八十五次</span><span class="item-text">看到好看的夕阳，觉得自己连看夕阳的样子都这么有氛围感。</span></div>
+        <div class="item"><span class="item-number">第八十六次</span><span class="item-text">对着空气比耶，觉得自己连比耶的样子都这么可爱。</span></div>
+        <div class="item"><span class="item-number">第八十七次</span><span class="item-text">被朋友开玩笑，觉得自己连被调侃的样子都这么有梗。</span></div>
+        <div class="item"><span class="item-number">第八十八次</span><span class="item-text">发呆，觉得自己发呆的样子都这么有故事感。</span></div>
+        <div class="item"><span class="item-number">第八十九次</span><span class="item-text">看到镜子里的自己，觉得自己连素颜都这么能打。</span></div>
+        <div class="item"><span class="item-number">第九十次</span><span class="item-text">想到自己的未来，觉得自己前途一片光明。</span></div>
+
+        <div class="item"><span class="item-number">第九十一次</span><span class="item-text">看到自己的照片，觉得自己怎么可以这么好看。</span></div>
+        <div class="item"><span class="item-number">第九十二次</span><span class="item-text">想到自己的特长，觉得自己简直是多才多艺。</span></div>
+        <div class="item"><span class="item-number">第九十三次</span><span class="item-text">想到自己的优点，发现自己的优点多到数不过来。</span></div>
+        <div class="item"><span class="item-number">第九十四次</span><span class="item-text">吹头发，觉得自己吹头发的样子都这么有魅力。</span></div>
+        <div class="item"><span class="item-number">第九十五次</span><span class="item-text">闭上眼睛，感受自己的心跳，觉得自己的生命力简直太旺盛了。</span></div>
+        <div class="item"><span class="item-number">第九十六次</span><span class="item-text">睁开眼睛，看清自己，真的是太棒了。</span></div>
+        <div class="item"><span class="item-number">第九十七次</span><span class="item-text">叹气，觉得自己叹气的样子都这么有魅力。</span></div>
+        <div class="item"><span class="item-number">第九十八次</span><span class="item-text">叹气，觉得自己叹气的样子都这么有故事感。</span></div>
+
+        <div class="item-final" id="finalItem">
+            <div class="item-number">第九十九次</div>
+            <div class="item-text">
+                我终于明白，<br>
+                原来我喜欢的那个女孩，<br>
+                一直都是我自己。<br><br>
+                <span class="heart">♥</span>
+            </div>
+            <div class="signature-final" id="signatureFinal">
+                <span class="signature-text">R汐.</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            你值得被自己喜欢99次，甚至更多。
+        </div>
+    </div>
+
+    <div class="music-player" id="musicBtn" onclick="toggleMusic()">
+        <svg viewBox="0 0 24 24" id="playIcon">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" id="pauseIcon" style="display:none">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://music.163.com/song/media/outer/url?id=409647388.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 生成漂浮光点
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 8 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.setProperty('--duration', Math.random() * 10 + 12 + 's');
+                particle.style.setProperty('--opacity', Math.random() * 0.3 + 0.15);
+                particle.style.setProperty('--moveY', (Math.random() - 0.5) * 250 + 'px');
+                particle.style.setProperty('--moveX', (Math.random() - 0.5) * 120 + 'px');
+                particle.style.animationDelay = Math.random() * 12 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        let musicPlaying = false;
+        let started = false;
+
+        function startExperience() {
+            document.getElementById('tapHint').classList.add('hidden');
+            started = true;
+
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.4;
+            music.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('musicBtn').classList.add('playing');
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+            }).catch(e => {
+                console.log('Auto play prevented, user can click music button');
+            });
+
+            showItems();
+        }
+
+        function toggleMusic() {
+            if (!started) {
+                startExperience();
+                return;
+            }
+
+            const music = document.getElementById('bgMusic');
+            if (musicPlaying) {
+                music.pause();
+                document.getElementById('musicBtn').classList.remove('playing');
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('pauseIcon').style.display = 'none';
+            } else {
+                music.play();
+                document.getElementById('musicBtn').classList.add('playing');
+                document.getElementById('playIcon').style.display = 'none';
+                document.getElementById('pauseIcon').style.display = 'block';
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        function showItems() {
+            const items = document.querySelectorAll('.item');
+            const finalItem = document.getElementById('finalItem');
+            const signatureFinal = document.getElementById('signatureFinal');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            items.forEach(item => observer.observe(item));
+            observer.observe(finalItem);
+
+            const sigObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            sigObserver.observe(signatureFinal);
+
+            setTimeout(() => {
+                items.forEach((item, index) => {
+                    if (index < 5) {
+                        setTimeout(() => item.classList.add('visible'), index * 150);
+                    }
+                });
+            }, 300);
+        }
+
+        document.addEventListener('WeixinJSBridgeReady', function() {
+        });
+
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+            }, 100);
+        });
+    </script>
+</body>
+</html>
